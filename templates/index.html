@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <p>Welcome, {{ session['user'] }} | <a href="/logout">Logout</a></p>
+    <form method="POST">
+        <label for="date">Date:</label><br>
+        <input type="date" name="date" required><br><br>
+
+        <label for="song">Song Title:</label><br>
+        <input type="text" name="song" required><br><br>
+
+        <label for="note">Your Thoughts:</label><br>
+        <textarea name="note" rows="4" cols="40" required></textarea><br><br>
+
+        <button type="submit">Add Entry</button>
+    </form>
+    <form method="GET" action="/">
+        <label for="filter-date">Filter by date:</label>
+        <input type="date" name="date" id="filter-date" value="{{ request.args.get('date', '') }}">
+        <button type="submit">Filter</button>
+        <a href="/">Clear</a>
+    </form>
+    <h2>Previous Entries</h2>
+    <ul>
+        {% for entry in entries %}
+            <li>
+                <strong>{{ entry[1] }}</strong> - {{ entry[2] }}<br>
+                <em>{{ entry[3] }}</em>
+                <form method="POST" action="/delete" style="display:inline;">
+                    <input type="hidden" name="id" value="{{ entry[0] }}">
+                    <button type="submit">Delete</button>
+                </form>
+                <form method="GET" action="/edit" style="display:inline;">
+                    <input type="hidden" name="id" value="{{ entry[0] }}">
+                    <button type="submit">Edit</button>
+                </form>
+            </li>
+        {% else %}
+            <li>No entries yet.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
